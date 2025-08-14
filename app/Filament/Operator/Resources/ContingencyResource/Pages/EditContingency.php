@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Filament\Operator\Resources\ContingencyResource\Pages;
+
+use App\Filament\Operator\Resources\ContingencyResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditContingency extends EditRecord
+{
+    protected static string $resource = ContingencyResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\ViewAction::make(),
+            Actions\DeleteAction::make(),
+        ];
+    }
+}

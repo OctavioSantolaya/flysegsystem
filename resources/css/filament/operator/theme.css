@@ -1,0 +1,32 @@
+/* Tema personalizado para el panel de operadores */
+
+/* Centrar la navegación superior */
+.fi-topbar nav {
+    justify-content: center !important;
+}
+
+/* Centrar el contenido de la navegación */
+.fi-topbar .fi-navbar {
+    justify-content: center !important;
+}
+
+/* Centrar los elementos de navegación */
+.fi-topbar .fi-navbar-ctn {
+    justify-content: center !important;
+}
+
+/* Centrar el topbar completo */
+.fi-topbar {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Asegurar que los items de navegación se centren */
+.fi-topbar .fi-topbar-content {
+    justify-content: center !important;
+}
+
+/* Centrar específicamente los links de navegación */
+.fi-topbar .fi-navbar-items {
+    justify-content: center !important;
+}
