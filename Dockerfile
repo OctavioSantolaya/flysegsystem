@@ -1,44 +1,36 @@
-FROM php:8.2-fpm
+# Etapa 1: PHP con dependencias de Laravel
+FROM php:8.2-fpm AS php
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    nginx \
-    supervisor \
-    libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# Instalar dependencias del sistema y extensiones de PHP necesarias para Laravel
+RUN apt-get update && apt-get install -y     git curl libpng-dev libjpeg-dev libfreetype6-dev zip unzip     libonig-dev libxml2-dev libzip-dev     && docker-php-ext-configure gd --with-freetype --with-jpeg     && docker-php-ext-install pdo pdo_mysql gd bcmath opcache zip
 
 # Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Crear directorio de trabajo
-WORKDIR /var/www/html
+# Establecer directorio de trabajo
+WORKDIR /var/www
 
-# Copiar archivos del proyecto
+# Copiar archivos de Laravel
 COPY . .
 
-# Instalar dependencias de PHP
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependencias de Laravel
+RUN composer install --no-dev --optimize-autoloader     && chown -R www-data:www-data storage bootstrap/cache
 
-# Configurar permisos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+# Etapa 2: Nginx
+FROM nginx:alpine
 
-# Configuración de Nginx
-COPY docker/nginx.conf /etc/nginx/sites-available/default
+# Instalar bash (útil para debug)
+RUN apk add --no-cache bash
 
-# Configuración de Supervisor
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Copiar configuración de Nginx
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Exponer puerto
+# Copiar código de Laravel desde la etapa PHP
+WORKDIR /var/www
+COPY --from=php /var/www /var/www
+
+# Exponer puerto 80
 EXPOSE 80
 
-# Comando por defecto
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Comando de inicio
+CMD ["nginx", "-g", "daemon off;"]
