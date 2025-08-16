@@ -1,0 +1,56 @@
+# Usar la imagen oficial de PHP 8.2 con FPM como base
+FROM php:8.2-fpm
+
+# Establecer el directorio de trabajo
+WORKDIR /var/www/html
+
+# Instalar dependencias del sistema para Laravel y Nginx
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    nginx \
+    git \
+    unzip \
+    libzip-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalar extensiones de PHP necesarias para Laravel
+RUN docker-php-ext-install pdo_mysql zip exif pcntl bcmath
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+
+# Instalar Composer (manejador de dependencias de PHP)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Instalar Node.js y npm para compilar los assets
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Copiar el código de la aplicación al contenedor
+COPY . .
+
+# Instalar dependencias de Composer
+RUN composer install --no-interaction --no-plugins --no-scripts --no-dev --optimize-autoloader
+
+# Instalar dependencias de NPM y compilar los assets para producción
+RUN npm install && npm run build
+
+# Establecer los permisos correctos para los directorios de Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# Copiar la configuración de Nginx
+COPY nginx.conf /etc/nginx/sites-enabled/default
+
+# Copiar el script de inicio
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Exponer el puerto 80 para el tráfico web
+EXPOSE 80
+
+# Definir el comando de inicio del contenedor
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
