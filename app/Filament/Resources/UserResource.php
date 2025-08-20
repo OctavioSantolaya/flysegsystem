@@ -56,6 +56,11 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                TextInput::make('phone')
+                    ->label('Teléfono')
+                    ->tel()
+                    ->maxLength(20)
+                    ->placeholder('Número de teléfono (opcional)'),
                 TextInput::make('password')
                     ->label('Contraseña')
                     ->password()
@@ -106,6 +111,11 @@ class UserResource extends Resource
                 TextColumn::make('email')
                     ->searchable()
                     ->label('Correo Electrónico'),
+                TextColumn::make('phone')
+                    ->searchable()
+                    ->label('Teléfono')
+                    ->placeholder('No especificado')
+                    ->toggleable(),
                 TextColumn::make('bases_count')
                     ->label('Bases')
                     ->badge()
