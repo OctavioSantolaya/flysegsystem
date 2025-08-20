@@ -61,6 +61,11 @@ class UserResource extends Resource
                     ->tel()
                     ->maxLength(20)
                     ->placeholder('Número de teléfono (opcional)'),
+                TextInput::make('chat_id')
+                    ->label('Chat ID')
+                    ->maxLength(255)
+                    ->placeholder('ID del chat (solo super admin)')
+                    ->visible(fn() => Auth::user()?->roles->pluck('name')->contains('super_admin') ?? false),
                 TextInput::make('password')
                     ->label('Contraseña')
                     ->password()
@@ -116,6 +121,12 @@ class UserResource extends Resource
                     ->label('Teléfono')
                     ->placeholder('No especificado')
                     ->toggleable(),
+                TextColumn::make('chat_id')
+                    ->searchable()
+                    ->label('Chat ID')
+                    ->placeholder('No especificado')
+                    ->toggleable()
+                    ->visible(fn() => Auth::user()?->roles->pluck('name')->contains('super_admin') ?? false),
                 TextColumn::make('bases_count')
                     ->label('Bases')
                     ->badge()
