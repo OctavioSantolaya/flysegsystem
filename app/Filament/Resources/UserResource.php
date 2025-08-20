@@ -100,7 +100,6 @@ class UserResource extends Resource
                     ->label('Bases Asignadas')
                     ->multiple()
                     ->relationship('bases', 'name')
-                    ->columnSpanFull()
                     ->preload(),
             ]);
     }
