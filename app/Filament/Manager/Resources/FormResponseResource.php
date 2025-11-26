@@ -8,6 +8,8 @@ use App\Models\FormResponse;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -47,6 +49,23 @@ class FormResponseResource extends Resource
                             ->rows(4)
                             ->helperText('Solo complete si el pasajero necesita alojamiento'),
                     ])->columns(1),
+                Section::make('Información de Alimentación')
+                    ->schema([
+                        TextInput::make('food_service_provider')
+                            ->label('Empresa de Catering')
+                            ->placeholder('Ingrese el nombre de la empresa')
+                            ->nullable(),
+                        Select::make('food_service_type')
+                            ->label('Tipo de Servicio')
+                            ->options([
+                                'Desayuno' => 'Desayuno',
+                                'Almuerzo' => 'Almuerzo',
+                                'Merienda' => 'Merienda',
+                                'Cena' => 'Cena',
+                                'Snack' => 'Snack',
+                            ])
+                            ->nullable(),
+                    ])->columns(2),
             ]);
     }
 
@@ -85,7 +104,7 @@ class FormResponseResource extends Resource
                     ->color('warning'),
                 TextColumn::make('children_ages')
                     ->label('Edades')
-                    ->formatStateUsing(fn ($state) => $state ? implode(', ', $state) . ' años' : 'N/A')
+                    ->formatStateUsing(fn($state) => $state ? implode(', ', $state) . ' años' : 'N/A')
                     ->toggleable(isToggledHiddenByDefault: true),
                 BooleanColumn::make('has_flight_reprogramming')
                     ->label('Reprogramación')
