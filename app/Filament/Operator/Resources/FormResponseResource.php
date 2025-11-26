@@ -150,73 +150,7 @@ class FormResponseResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tabs\Tab::make('Transporte')
-                            ->schema([
-                                IconEntry::make('needs_transport')
-                                    ->label('Necesita Transporte')
-                                    ->boolean(),
-                                TextEntry::make('transport_address')
-                                    ->label('Dirección')
-                                    ->placeholder('No especificada')
-                                    ->visible(fn($record) => $record->needs_transport),
-                                TextEntry::make('luggage_count')
-                                    ->label('Equipaje')
-                                    ->visible(fn($record) => $record->needs_transport),
-                            ]),
-                        Tabs\Tab::make('Alojamiento')
-                            ->schema([
-                                IconEntry::make('needs_accommodation')
-                                    ->label('Necesita Alojamiento')
-                                    ->boolean(),
-                                TextEntry::make('children_count')
-                                    ->label('Cantidad de Niños')
-                                    ->visible(fn($record) => $record->needs_accommodation),
-                                TextEntry::make('children_ages')
-                                    ->label('Edades de Niños')
-                                    ->listWithLineBreaks()
-                                    ->bulleted()
-                                    ->visible(fn($record) => $record->needs_accommodation && $record->children_count > 0),
-                            ]),
-                        Tabs\Tab::make('Alimentación')
-                            ->schema([
-                                TextEntry::make('food_service_provider')
-                                    ->label('Empresa de Catering')
-                                    ->placeholder('No asignada'),
-                                TextEntry::make('food_service_type')
-                                    ->label('Tipo de Servicio')
-                                    ->placeholder('No especificado'),
-                            ]),
-                        Tabs\Tab::make('Condición Médica')
-                            ->schema([
-                                IconEntry::make('has_medical_condition')
-                                    ->label('Tiene Condición Médica')
-                                    ->boolean(),
-                                TextEntry::make('medical_condition_details')
-                                    ->label('Detalles')
-                                    ->visible(fn($record) => $record->has_medical_condition),
-                            ]),
-                        Tabs\Tab::make('Reprogramación')
-                            ->schema([
-                                IconEntry::make('has_flight_reprogramming')
-                                    ->label('Tiene Reprogramación')
-                                    ->boolean(),
-                                TextEntry::make('reprogrammed_flight_number')
-                                    ->label('Nuevo Vuelo')
-                                    ->visible(fn($record) => $record->has_flight_reprogramming),
-                                TextEntry::make('reprogrammed_flight_date')
-                                    ->label('Nueva Fecha')
-                                    ->date('d/m/Y')
-                                    ->visible(fn($record) => $record->has_flight_reprogramming),
-                            ]),
-                    ])->columnSpanFull(),
-            ]);
-    }
+
 
     public static function table(Table $table): Table
     {

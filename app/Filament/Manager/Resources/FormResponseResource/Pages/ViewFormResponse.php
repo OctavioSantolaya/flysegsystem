@@ -112,6 +112,15 @@ class ViewFormResponse extends ViewRecord
                                     ])
                                     ->collapsed()
                             ])->columns(3),
+                        Tab::make('Alimentación')
+                            ->schema([
+                                TextEntry::make('food_service_provider')
+                                    ->label('Empresa de Catering')
+                                    ->placeholder('No asignada'),
+                                TextEntry::make('food_service_type')
+                                    ->label('Tipo de Servicio')
+                                    ->placeholder('No especificado'),
+                            ]),
                         Tab::make('Condición Médica')
                             ->schema([
                                 IconEntry::make('has_medical_condition')
