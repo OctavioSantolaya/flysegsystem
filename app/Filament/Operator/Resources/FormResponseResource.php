@@ -89,11 +89,28 @@ class FormResponseResource extends Resource
                                         ->required(),
                                 ])
                                 ->addActionLabel('Agregar Edad')
-                                ->itemLabel(fn (array $state): ?string => $state['age'] ? "Niño de {$state['age']} años" : null)
+                                ->itemLabel(fn(array $state): ?string => $state['age'] ? "Niño de {$state['age']} años" : null)
                                 ->minItems(fn($get) => $get('children_count'))
                                 ->maxItems(fn($get) => $get('children_count'))
                                 ->visible(fn($get) => $get('needs_accommodation') && $get('children_count') > 0)
                                 ->required(fn($get) => $get('needs_accommodation') && $get('children_count') > 0),
+                        ]),
+                    Wizard\Step::make('Alimentación')
+                        ->schema([
+                            TextInput::make('food_service_provider')
+                                ->label('Empresa de Catering')
+                                ->placeholder('Ingrese el nombre de la empresa')
+                                ->nullable(),
+                            Select::make('food_service_type')
+                                ->label('Tipo de Servicio')
+                                ->options([
+                                    'Desayuno' => 'Desayuno',
+                                    'Almuerzo' => 'Almuerzo',
+                                    'Merienda' => 'Merienda',
+                                    'Cena' => 'Cena',
+                                    'Snack' => 'Snack',
+                                ])
+                                ->nullable(),
                         ]),
                     Wizard\Step::make('Condición Médica')
                         ->schema([
@@ -159,7 +176,7 @@ class FormResponseResource extends Resource
                     ->color('warning'),
                 TextColumn::make('children_ages')
                     ->label('Edades')
-                    ->formatStateUsing(fn ($state) => $state ? implode(', ', $state) . ' años' : 'N/A')
+                    ->formatStateUsing(fn($state) => $state ? implode(', ', $state) . ' años' : 'N/A')
                     ->toggleable(isToggledHiddenByDefault: true),
                 BooleanColumn::make('has_medical_condition')
                     ->label('Condición Médica'),

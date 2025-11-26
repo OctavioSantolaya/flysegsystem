@@ -22,6 +22,8 @@ class FormResponse extends Model
         'reprogrammed_flight_date',
         'assigned_accommodation_info',
         'assigned_transport_info',
+        'food_service_provider',
+        'food_service_type',
     ];
 
     protected $casts = [
@@ -74,13 +76,13 @@ class FormResponse extends Model
     public function hasValidPrimaryContact()
     {
         $firstPassenger = $this->passengers()->first();
-        
+
         if (!$firstPassenger) {
             return false;
         }
 
-        return $this->isValidEmail($firstPassenger->email) && 
-               $this->isValidPhone($firstPassenger->phone);
+        return $this->isValidEmail($firstPassenger->email) &&
+            $this->isValidPhone($firstPassenger->phone);
     }
 
     /**
@@ -98,11 +100,11 @@ class FormResponse extends Model
     {
         // Remover espacios y caracteres especiales
         $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
-        
+
         // Validar que tenga al menos 10 dígitos y máximo 15
-        return !empty($cleanPhone) && 
-               strlen($cleanPhone) >= 10 && 
-               strlen($cleanPhone) <= 15 &&
-               preg_match('/^[\+]?[0-9]{10,15}$/', $cleanPhone);
+        return !empty($cleanPhone) &&
+            strlen($cleanPhone) >= 10 &&
+            strlen($cleanPhone) <= 15 &&
+            preg_match('/^[\+]?[0-9]{10,15}$/', $cleanPhone);
     }
 }
