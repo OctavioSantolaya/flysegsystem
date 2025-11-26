@@ -18,6 +18,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section as InfolistSection;
 
 class FormResponseResource extends Resource
 {
@@ -66,6 +71,88 @@ class FormResponseResource extends Resource
                             ])
                             ->nullable(),
                     ])->columns(2),
+            ]);
+    }
+
+
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Detalles')
+                            ->schema([
+                                InfolistSection::make('Transporte')
+                                    ->schema([
+                                        IconEntry::make('needs_transport')
+                                            ->label('Necesita Transporte')
+                                            ->boolean(),
+                                        TextEntry::make('transport_address')
+                                            ->label('Dirección')
+                                            ->placeholder('No especificada')
+                                            ->visible(fn($record) => $record->needs_transport),
+                                        TextEntry::make('luggage_count')
+                                            ->label('Equipaje')
+                                            ->visible(fn($record) => $record->needs_transport),
+                                    ])->columns(3),
+                                InfolistSection::make('Alojamiento')
+                                    ->schema([
+                                        IconEntry::make('needs_accommodation')
+                                            ->label('Necesita Alojamiento')
+                                            ->boolean(),
+                                        TextEntry::make('children_count')
+                                            ->label('Cantidad de Niños')
+                                            ->visible(fn($record) => $record->needs_accommodation),
+                                        TextEntry::make('children_ages')
+                                            ->label('Edades de Niños')
+                                            ->listWithLineBreaks()
+                                            ->bulleted()
+                                            ->visible(fn($record) => $record->needs_accommodation && $record->children_count > 0),
+                                    ])->columns(3),
+                                InfolistSection::make('Condición Médica')
+                                    ->schema([
+                                        IconEntry::make('has_medical_condition')
+                                            ->label('Tiene Condición Médica')
+                                            ->boolean(),
+                                        TextEntry::make('medical_condition_details')
+                                            ->label('Detalles')
+                                            ->visible(fn($record) => $record->has_medical_condition),
+                                    ])->columns(2),
+                                InfolistSection::make('Reprogramación')
+                                    ->schema([
+                                        IconEntry::make('has_flight_reprogramming')
+                                            ->label('Tiene Reprogramación')
+                                            ->boolean(),
+                                        TextEntry::make('reprogrammed_flight_number')
+                                            ->label('Nuevo Vuelo')
+                                            ->visible(fn($record) => $record->has_flight_reprogramming),
+                                        TextEntry::make('reprogrammed_flight_date')
+                                            ->label('Nueva Fecha')
+                                            ->date('d/m/Y')
+                                            ->visible(fn($record) => $record->has_flight_reprogramming),
+                                    ])->columns(3),
+                            ]),
+                        Tabs\Tab::make('Asignaciones')
+                            ->schema([
+                                TextEntry::make('assigned_transport_info')
+                                    ->label('Asignación de Transporte')
+                                    ->placeholder('Sin asignación'),
+                                TextEntry::make('assigned_accommodation_info')
+                                    ->label('Asignación de Alojamiento')
+                                    ->placeholder('Sin asignación'),
+                            ]),
+                        Tabs\Tab::make('Alimentación')
+                            ->schema([
+                                TextEntry::make('food_service_provider')
+                                    ->label('Empresa de Catering')
+                                    ->placeholder('No asignada'),
+                                TextEntry::make('food_service_type')
+                                    ->label('Tipo de Servicio')
+                                    ->placeholder('No especificado'),
+                            ]),
+                    ])->columnSpanFull(),
             ]);
     }
 
