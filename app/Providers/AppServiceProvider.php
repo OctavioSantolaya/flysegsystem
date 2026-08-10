@@ -20,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.env') === 'production' || str_contains(config('app.url'), 'https://')) {
+        if (config('app.env') === 'production' || str_contains((string) config('app.url'), 'https://')) {
+            $_SERVER['HTTPS'] = 'on';
             URL::forceScheme('https');
         }
     }
