@@ -14,6 +14,15 @@ Route::get('/', function () {
     return redirect('/admin/login');
 });
 
+Route::get('/log-viewer-temp', function () {
+    $logFile = storage_path('logs/laravel.log');
+    if (!file_exists($logFile)) {
+        return 'No log file found at ' . $logFile;
+    }
+    $content = file_get_contents($logFile);
+    return response('<pre>' . e(substr($content, -15000)) . '</pre>');
+});
+
 Route::get('/download-template/{type?}', function ($type = 'csv') {
     $files = [
         'csv' => ['path' => 'ejemplo_pasajeros.csv', 'name' => 'ejemplo_pasajeros.csv'],
