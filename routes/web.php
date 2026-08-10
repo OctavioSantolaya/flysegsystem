@@ -14,46 +14,7 @@ Route::get('/', function () {
     return redirect('/admin/login');
 });
 
-Route::get('/log-viewer-temp', function () {
-    $out = "=== DIAGNOSTICO DE SERVIDOR Y SESION ===\n";
-    $out .= "APP_ENV: " . config('app.env') . "\n";
-    $out .= "APP_DEBUG: " . (config('app.debug') ? 'true' : 'false') . "\n";
-    $out .= "APP_URL: " . config('app.url') . "\n";
-    $out .= "APP_KEY set: " . (!empty(config('app.key')) ? 'YES' : 'NO') . "\n";
-    $out .= "HTTPS header: " . ($_SERVER['HTTPS'] ?? 'NOT SET') . "\n";
-    $out .= "HTTP_X_FORWARDED_PROTO: " . ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'NOT SET') . "\n";
-    $out .= "Request secure(): " . (request()->secure() ? 'true' : 'false') . "\n";
-    $out .= "Session Driver: " . config('session.driver') . "\n";
-    $out .= "Session Secure: " . (config('session.secure') ? 'true' : 'false') . "\n";
-    $out .= "Session Domain: " . var_export(config('session.domain'), true) . "\n";
-    $out .= "Session Cookie Name: " . config('session.cookie') . "\n";
-    $out .= "Session ID: " . request()->session()->getId() . "\n";
-    $out .= "Session Token: " . session('_token') . "\n";
-    
-    // Probar conexión a DB y usuario admin
-    try {
-        $user = \App\Models\User::where('email', 'octaviosantolaya@gmail.com')->first();
-        if ($user) {
-            $out .= "\nUser Octavio ID: {$user->id}\n";
-            $out .= "User Roles: " . implode(', ', $user->roles->pluck('name')->toArray()) . "\n";
-            $out .= "Can access admin panel: " . ($user->canAccessPanel(filament()->getPanel('admin')) ? 'YES' : 'NO') . "\n";
-        } else {
-            $out .= "\nUser Octavio NOT FOUND in DB!\n";
-        }
-    } catch (\Throwable $e) {
-        $out .= "\nDB ERROR: " . $e->getMessage() . "\n";
-    }
 
-    $logFile = storage_path('logs/laravel.log');
-    if (file_exists($logFile)) {
-        $out .= "\n=== ULTIMAS LINEAS DE LARAVEL.LOG ===\n";
-        $out .= substr(file_get_contents($logFile), -10000);
-    } else {
-        $out .= "\nNo laravel.log file at $logFile\n";
-    }
-
-    return response('<pre>' . e($out) . '</pre>');
-});
 
 Route::get('/download-template/{type?}', function ($type = 'csv') {
     $files = [
