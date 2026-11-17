@@ -43,10 +43,12 @@ Route::get('/contingencias/{slug}/qr', [ContingencyQrController::class, 'showQr'
 Route::get('/contingencias/{slug}/formulario', [ContingencyQrController::class, 'showForm'])->name('contingency.form');
 
 // Rutas AJAX para el formulario
-Route::post('/contingencias/{slug}/buscar-pasajero', [ContingencyQrController::class, 'searchPassenger'])->name('contingency.search-passenger');
-Route::post('/contingencias/{slug}/buscar-pasajero-adicional', [ContingencyQrController::class, 'searchAdditionalPassenger'])->name('contingency.search-additional-passenger');
-Route::post('/contingencias/{slug}/guardar-formulario', [ContingencyQrController::class, 'saveForm'])->name('contingency.save-form');
-Route::post('/contingencias/{slug}/buscar-respuesta', [ContingencyQrController::class, 'searchFormResponse'])->name('contingency.search-response');
+Route::prefix('contingencias/{slug}')->middleware('throttle:30,1')->group(function () {
+    Route::post('/buscar-pasajero', [ContingencyQrController::class, 'searchPassenger'])->name('contingency.search-passenger');
+    Route::post('/buscar-pasajero-adicional', [ContingencyQrController::class, 'searchAdditionalPassenger'])->name('contingency.search-additional-passenger');
+    Route::post('/guardar-formulario', [ContingencyQrController::class, 'saveForm'])->name('contingency.save-form');
+    Route::post('/buscar-respuesta', [ContingencyQrController::class, 'searchFormResponse'])->name('contingency.search-response');
+});
 
 // Rutas de redirección inteligente para paneles
 Route::get('/acceso-denegado', function () {
